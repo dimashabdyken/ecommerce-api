@@ -9,6 +9,7 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .cart import Cart
+    from .order import Order
 
 
 class User(Base):
@@ -20,3 +21,4 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
     carts: Mapped[list[Cart]] = relationship(back_populates="user")
+    orders: Mapped[list[Order]] = relationship(back_populates="user")
