@@ -9,5 +9,11 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env")
 
+    STRIPE_SECRET_KEY: str
+    STRIPE_PUBLISHABLE_KEY: str
+    STRIPE_WEBHOOK_SECRET: str | None = None
+
+    model_config = SettingsConfigDict(env_file=".env")
+
 
 settings = Settings()
