@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class CartItemCreate(BaseModel):
@@ -15,8 +15,7 @@ class CartItemResponse(BaseModel):
     product_id: int
     quantity: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CartResponse(BaseModel):
@@ -24,5 +23,4 @@ class CartResponse(BaseModel):
     user_id: int
     items: list[CartItemResponse]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
