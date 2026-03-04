@@ -1,4 +1,4 @@
-from .cart import CartItemCreate, CartItemResponse, CartResponse
+from .cart import CartItemCreate, CartItemResponse, CartItemUpdate, CartResponse
 from .order import (
     CheckoutRequest,
     CheckoutResponse,
@@ -16,6 +16,7 @@ __all__ = [
     "ProductUpdate",
     "ProductResponse",
     "CartItemCreate",
+    "CartItemUpdate",
     "CartItemResponse",
     "CartResponse",
     "OrderItemResponse",
