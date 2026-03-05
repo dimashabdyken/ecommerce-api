@@ -6,6 +6,7 @@ from app.api.dependencies import get_current_user, get_db
 from app.core.config import settings
 from app.models.cart import Cart, CartItem
 from app.models.order import Order, OrderItem, OrderStatus
+from app.models.product import Product
 from app.models.user import User
 from app.schemas.order import CheckoutRequest, CheckoutResponse, OrderResponse
 
@@ -28,6 +29,15 @@ def create_checkout_session(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Cart is empty"
         )
+
+    # Validate stock availability before creating order
+    for cart_item in cart.items:
+        if cart_item.product.stock_quantity < cart_item.quantity:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Insufficient stock for '{cart_item.product.name}': "
+                f"requested {cart_item.quantity}, available {cart_item.product.stock_quantity}",
+            )
 
     # Calculate total amount
     total_amount = sum(item.quantity * item.product.price for item in cart.items)
@@ -132,6 +142,16 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
             order = db.query(Order).filter(Order.id == int(order_id)).first()
             if order:
                 order.status = OrderStatus.PAID
+
+                # Decrement stock for each purchased item
+                for item in order.items:
+                    product = (
+                        db.query(Product).filter(Product.id == item.product_id).first()
+                    )
+                    if product:
+                        product.stock_quantity = max(
+                            0, product.stock_quantity - item.quantity
+                        )
 
                 # Clear user's cart after successful payment
                 cart = db.query(Cart).filter(Cart.user_id == order.user_id).first()
