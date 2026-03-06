@@ -1,5 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import or_, select
+from decimal import Decimal
+from enum import Enum
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import asc, desc, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.api.dependencies import get_current_admin_user
@@ -9,6 +12,18 @@ from app.models.user import User
 from app.schemas.product import ProductCreate, ProductResponse, ProductUpdate
 
 router = APIRouter(prefix="/products", tags=["products"])
+
+
+class SortBy(str, Enum):
+    name = "name"
+    price = "price"
+    stock = "stock_quantity"
+
+
+class SortOrder(str, Enum):
+    asc = "asc"
+    desc = "desc"
+
 
 async_engine = create_async_engine(settings.DATABASE_URL, echo=True)
 AsyncSessionLocal = async_sessionmaker(
@@ -27,9 +42,17 @@ async def get_async_db() -> AsyncSession:
 async def list_products(
     search: str | None = None,
     category: str | None = None,
+    min_price: Decimal | None = Query(default=None, ge=0),
+    max_price: Decimal | None = Query(default=None, ge=0),
+    in_stock: bool | None = None,
+    sort_by: SortBy = SortBy.name,
+    order: SortOrder = SortOrder.asc,
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=20, ge=1, le=100),
     db: AsyncSession = Depends(get_async_db),
 ):
-    query = select(Product)
+    query = select(Product).where(Product.is_active == True)
+
     if search:
         like = f"%{search}%"
         query = query.where(
@@ -37,6 +60,19 @@ async def list_products(
         )
     if category:
         query = query.where(Product.category == category)
+    if min_price is not None:
+        query = query.where(Product.price >= min_price)
+    if max_price is not None:
+        query = query.where(Product.price <= max_price)
+    if in_stock:
+        query = query.where(Product.stock_quantity > 0)
+
+    sort_column = getattr(Product, sort_by.value)
+    query = query.order_by(
+        asc(sort_column) if order == SortOrder.asc else desc(sort_column)
+    )
+
+    query = query.offset((page - 1) * limit).limit(limit)
 
     result = await db.execute(query)
     return result.scalars().all()
