@@ -9,6 +9,7 @@ from app.models.order import Order, OrderItem, OrderStatus
 from app.models.product import Product
 from app.models.user import User
 from app.schemas.order import CheckoutRequest, CheckoutResponse, OrderResponse
+from app.services.email import send_order_confirmation_email
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 
@@ -159,6 +160,14 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
                     db.query(CartItem).filter(CartItem.cart_id == cart.id).delete()
 
                 db.commit()
+
+                # Refresh order to load relationships for email
+                db.refresh(order)
+
+                # Send order confirmation email
+                await send_order_confirmation_email(
+                    to_email=order.user.email, order=order
+                )
 
     elif event["type"] == "payment_intent.payment_failed":
         payment_intent = event["data"]["object"]
