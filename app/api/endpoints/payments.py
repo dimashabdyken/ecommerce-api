@@ -180,3 +180,103 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
                 db.commit()
 
     return {"status": "success"}
+
+
+@router.post("/orders/{order_id}/cancel", status_code=status.HTTP_200_OK)
+def cancel_order(
+    order_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Cancel a pending order (before payment)."""
+    order = (
+        db.query(Order)
+        .filter(Order.id == order_id, Order.user_id == current_user.id)
+        .first()
+    )
+
+    if not order:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+        )
+
+    if order.status != OrderStatus.PENDING:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot cancel order with status '{order.status}'. Only PENDING orders can be cancelled.",
+        )
+
+    order.status = OrderStatus.CANCELED
+    db.commit()
+
+    return {
+        "message": f"Order #{order_id} cancelled successfully",
+        "order_id": order_id,
+    }
+
+
+@router.post("/orders/{order_id}/refund", status_code=status.HTTP_200_OK)
+def refund_order(
+    order_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Refund a paid order and restore stock."""
+    order = (
+        db.query(Order)
+        .filter(Order.id == order_id, Order.user_id == current_user.id)
+        .first()
+    )
+
+    if not order:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Order not found"
+        )
+
+    if order.status != OrderStatus.PAID:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot refund order with status '{order.status}'. Only PAID orders can be refunded.",
+        )
+
+    if not order.stripe_payment_intent_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No payment intent found for this order",
+        )
+
+    # Process Stripe refund
+    try:
+        refund = stripe.Refund.create(payment_intent=order.stripe_payment_intent_id)
+
+        if refund.status == "succeeded":
+            # Update order status
+            order.status = OrderStatus.REFUNDED
+
+            # Restore stock for each item
+            for item in order.items:
+                product = (
+                    db.query(Product).filter(Product.id == item.product_id).first()
+                )
+                if product:
+                    product.stock_quantity += item.quantity
+
+            db.commit()
+
+            return {
+                "message": f"Order #{order_id} refunded successfully",
+                "order_id": order_id,
+                "refund_id": refund.id,
+                "amount_refunded": refund.amount / 100,  # Convert cents to dollars
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Refund failed with status: {refund.status}",
+            )
+
+    except stripe.error.StripeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Stripe refund error: {str(e)}",
+        )
