@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 if TYPE_CHECKING:
+    from .address import Address
     from .product import Product
     from .user import User
 
@@ -33,6 +34,10 @@ class Order(Base):
     stripe_payment_intent_id: Mapped[str | None] = mapped_column(
         String(255), nullable=True, unique=True, index=True
     )
+    shipping_address_id: Mapped[int | None] = mapped_column(
+        ForeignKey("addresses.id"), nullable=True
+    )
+    shipping_address: Mapped[Address | None] = relationship()
 
     user: Mapped[User] = relationship(back_populates="orders")
     items: Mapped[list[OrderItem]] = relationship(
