@@ -1,3 +1,4 @@
+from .address import Address
 from .base import Base
 from .cart import Cart, CartItem
 from .order import Order, OrderItem, OrderStatus
@@ -13,4 +14,5 @@ __all__ = [
     "Order",
     "OrderItem",
     "OrderStatus",
+    "Address",
 ]
