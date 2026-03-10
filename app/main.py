@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.endpoints import auth, cart, payments, products
+from app.api.endpoints import auth, cart, payments, products, users
 
 app = FastAPI(title="E-Commerce API")
 
@@ -9,6 +9,7 @@ app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(cart.router)
 app.include_router(payments.router)
+app.include_router(users.router)
 
 
 @app.get("/")
