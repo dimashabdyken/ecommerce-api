@@ -19,3 +19,8 @@ __pycache__/
 .ruff_cache/
 
 *.db
+
+# Test reports and documentation
+TEST_RESULTS.md
+TEST_REPORT.md
+TESTING.md
