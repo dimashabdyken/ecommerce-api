@@ -27,6 +27,7 @@ jobs:
     env:
       DATABASE_URL: postgresql+asyncpg://postgres:password@localhost:5432/ecommerce_db
       SECRET_KEY: ci-test-secret-key
+      STRIPE_WEBHOOK_SECRET: whsec_ci_test_secret
       PYTHONUNBUFFERED: "1"
 
     steps:
