@@ -51,7 +51,7 @@ async def list_products(
     limit: int = Query(default=20, ge=1, le=100),
     db: AsyncSession = Depends(get_async_db),
 ):
-    query = select(Product).where(Product.is_active == True)
+    query = select(Product).where(Product.is_active)
 
     if search:
         like = f"%{search}%"
