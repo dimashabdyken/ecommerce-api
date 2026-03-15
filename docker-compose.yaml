@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   db:
+    container_name: db
     image: postgres:15-alpine
     restart: always
     environment:
@@ -14,6 +15,7 @@ services:
       - postgres_data:/var/lib/postgresql/data      
 
   api:
+      container_name: api
       build: .
       restart: always
       environment:
@@ -22,6 +24,7 @@ services:
         - db
 
   nginx:
+    container_name: nginx
     image: nginx:alpine 
     restart: always
     ports:
