@@ -24,3 +24,13 @@ __pycache__/
 TEST_RESULTS.md
 TEST_REPORT.md
 TESTING.md
+
+# Terraform local artifacts
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
