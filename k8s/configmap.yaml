@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ecommerce-api-config
+  namespace: ecommerce
+  labels:
+    app: ecommerce-api
+data:
+  DATABASE_HOST: your-rds-endpoint.us-east-1.rds.amazonaws.com
+  AWS_REGION: us-east-1
+  APP_ENV: production
