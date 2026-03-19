@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-api
+  namespace: ecommerce
+  labels:
+    app: ecommerce-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ecommerce-api
+  template:
+    metadata:
+      labels:
+        app: ecommerce-api
+    spec:
+      containers:
+        - name: ecommerce-api
+          image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: ecommerce-api-config
+            - secretRef:
+                name: ecommerce-api-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
