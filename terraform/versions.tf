@@ -8,13 +8,14 @@ terraform {
     }
   }
 
-  # Bootstrap note:
-  # 1) Create the bucket resource first using: terraform init -backend=false && terraform apply
-  # 2) Update bucket name below to match var.tf_state_bucket_name and run terraform init -reconfigure
-  backend "s3" {
-    bucket  = "ecommerce-api-terraform-state-change-me"
-    key     = "ecommerce-api/dev/terraform.tfstate"
-    region  = "us-east-1"
-    encrypt = true
+  # Use local state by default to avoid S3 backend bootstrap issues.
+  # Optional: to use remote S3 state later, run:
+  # terraform init -reconfigure \
+  #   -backend-config="bucket=<existing-bucket-name>" \
+  #   -backend-config="key=ecommerce-api/dev/terraform.tfstate" \
+  #   -backend-config="region=us-east-1" \
+  #   -backend-config="encrypt=true"
+  backend "local" {
+    path = "terraform.tfstate"
   }
 }
