@@ -82,6 +82,18 @@ resource "aws_eks_cluster" "this" {
   })
 }
 
+resource "aws_launch_template" "eks_nodes" {
+  name_prefix = "${var.project_name}-${var.environment}-eks-nodes-"
+
+  network_interfaces {
+    security_groups = [aws_security_group.eks_nodes.id]
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${var.project_name}-${var.environment}-eks-nodes-lt"
+  })
+}
+
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = "${var.cluster_name}-nodes"
@@ -96,6 +108,11 @@ resource "aws_eks_node_group" "main" {
 
   instance_types = ["t3.medium"]
   capacity_type  = "ON_DEMAND"
+
+  launch_template {
+    id      = aws_launch_template.eks_nodes.id
+    version = "$Latest"
+  }
 
   depends_on = [
     aws_iam_role_policy_attachment.eks_worker_node,
