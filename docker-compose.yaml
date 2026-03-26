@@ -20,6 +20,7 @@ services:
       restart: always
       environment:
         DATABASE_URL: postgresql+asyncpg://postgres:password@db:5432/ecommerce_db
+        SECRET_KEY: local-dev-secret-key-change-me
       depends_on:
         - db
 
