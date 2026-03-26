@@ -17,7 +17,8 @@ spec:
     spec:
       initContainers:
         - name: migrate-db
-          image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
+          # Replace with your real image URI, e.g. <account>.dkr.ecr.<region>.amazonaws.com/ecommerce-api:<tag>
+          image: your-account-id.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
           imagePullPolicy: IfNotPresent
           command: ["uv", "run", "alembic", "upgrade", "head"]
           envFrom:
@@ -27,7 +28,8 @@ spec:
                 name: ecommerce-api-secrets
       containers:
         - name: ecommerce-api
-          image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
+          # Replace with the same image URI as initContainer
+          image: your-account-id.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
