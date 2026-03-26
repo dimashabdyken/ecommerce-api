@@ -15,6 +15,16 @@ spec:
       labels:
         app: ecommerce-api
     spec:
+      initContainers:
+        - name: migrate-db
+          image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
+          imagePullPolicy: IfNotPresent
+          command: ["uv", "run", "alembic", "upgrade", "head"]
+          envFrom:
+            - configMapRef:
+                name: ecommerce-api-config
+            - secretRef:
+                name: ecommerce-api-secrets
       containers:
         - name: ecommerce-api
           image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
