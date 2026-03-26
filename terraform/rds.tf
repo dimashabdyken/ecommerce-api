@@ -50,9 +50,10 @@ resource "aws_db_instance" "postgres" {
 
   publicly_accessible     = false
   multi_az                = false
-  backup_retention_period = 0
-  deletion_protection     = false
-  skip_final_snapshot     = true
+  backup_retention_period = var.environment == "prod" ? 7 : 1
+  deletion_protection     = var.environment == "prod"
+  skip_final_snapshot     = var.environment != "prod"
+  final_snapshot_identifier = var.environment == "prod" ? "${var.project_name}-${var.environment}-final" : null
   apply_immediately       = true
 
   tags = merge(local.common_tags, {
