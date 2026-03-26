@@ -48,13 +48,13 @@ resource "aws_db_instance" "postgres" {
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds.id]
 
-  publicly_accessible     = false
-  multi_az                = false
-  backup_retention_period = var.environment == "prod" ? 7 : 1
-  deletion_protection     = var.environment == "prod"
-  skip_final_snapshot     = var.environment != "prod"
+  publicly_accessible       = false
+  multi_az                  = false
+  backup_retention_period   = var.environment == "prod" ? 7 : 1
+  deletion_protection       = var.environment == "prod"
+  skip_final_snapshot       = var.environment != "prod"
   final_snapshot_identifier = var.environment == "prod" ? "${var.project_name}-${var.environment}-final" : null
-  apply_immediately       = true
+  apply_immediately         = true
 
   tags = merge(local.common_tags, {
     Name = "${var.project_name}-${var.environment}-postgres"
