@@ -5,15 +5,27 @@ build/
 dist/
 wheels/
 *.egg-info
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.ipynb_checkpoints/
+
+# IDE and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
 
 .env
 
 # Virtual environments
 .venv/
-.env/
 venv/
+.python-version
 
-__pycache__/
 *.pyc
 .pytest_cache/
 .ruff_cache/
