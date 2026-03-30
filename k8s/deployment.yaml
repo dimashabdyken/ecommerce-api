@@ -17,8 +17,8 @@ spec:
     spec:
       initContainers:
         - name: migrate-db
-          # Replace with your real image URI, e.g. <account>.dkr.ecr.<region>.amazonaws.com/ecommerce-api:<tag>
-          image: your-account-id.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
+          # ВНИМАНИЕ: Замените на URL из terraform (ecr_repository_url)
+          image: <ВАШ_ECR_РЕПОЗИТОРИЙ_URL>:latest
           imagePullPolicy: IfNotPresent
           command: ["uv", "run", "alembic", "upgrade", "head"]
           envFrom:
@@ -28,8 +28,8 @@ spec:
                 name: ecommerce-api-secrets
       containers:
         - name: ecommerce-api
-          # Replace with the same image URI as initContainer
-          image: your-account-id.dkr.ecr.us-east-1.amazonaws.com/ecommerce-api:latest
+          # ВНИМАНИЕ: Замените на URL из terraform (ecr_repository_url) такой же как выше
+          image: <ВАШ_ECR_РЕПОЗИТОРИЙ_URL>:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
