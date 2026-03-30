@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - http:  # Убрали привязку к домену, теперь будет принимать запросы по любому IP-адресу
+    - http: # Убрали привязку к домену, теперь будет принимать запросы по любому IP-адресу
         paths:
           - path: /
             pathType: Prefix

@@ -43,5 +43,5 @@ variable "db_password" {
 variable "tf_state_bucket_name" {
   description = "Globally unique S3 bucket name for Terraform state"
   type        = string
-  default     = "ecommerce-api-terraform-state-change-me"
+  default     = "ecommerce-api-tfstate-roma-donskoy-2026"
 }
