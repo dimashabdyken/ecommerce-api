@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ecommerce-db-migration
+  namespace: ecommerce
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    spec:
+      containers:
+        - name: migrate-db
+          image: <ВАШ_ECR_РЕПОЗИТОРИЙ_URL>:latest
+          imagePullPolicy: Always
+          command: ["uv", "run", "alembic", "upgrade", "head"]
+          envFrom:
+            - configMapRef:
+                name: ecommerce-api-config
+            - secretRef:
+                name: ecommerce-api-secrets
+      restartPolicy: Never
+  backoffLimit: 3
