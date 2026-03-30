@@ -15,17 +15,6 @@ spec:
       labels:
         app: ecommerce-api
     spec:
-      initContainers:
-        - name: migrate-db
-          # ВНИМАНИЕ: Замените на URL из terraform (ecr_repository_url)
-          image: <ВАШ_ECR_РЕПОЗИТОРИЙ_URL>:latest
-          imagePullPolicy: IfNotPresent
-          command: ["uv", "run", "alembic", "upgrade", "head"]
-          envFrom:
-            - configMapRef:
-                name: ecommerce-api-config
-            - secretRef:
-                name: ecommerce-api-secrets
       containers:
         - name: ecommerce-api
           # ВНИМАНИЕ: Замените на URL из terraform (ecr_repository_url) такой же как выше
