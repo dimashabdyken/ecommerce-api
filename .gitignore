@@ -19,23 +19,24 @@ htmlcov/
 *.swo
 .DS_Store
 
+# Environment files
 .env
+.env.*
+*.env
 
 # Virtual environments
 .venv/
 venv/
 .python-version
-
 *.pyc
+
+# Tool caches
 .pytest_cache/
 .ruff_cache/
 
+# Database
 *.db
-
-# Test reports and documentation
-TEST_RESULTS.md
-TEST_REPORT.md
-TESTING.md
+*.sqlite3
 
 # Terraform local artifacts
 **/.terraform/
@@ -46,3 +47,10 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+.terraform.lock.hcl
+
+# Docker
+*.log
+
+# UV
+uv.lock
