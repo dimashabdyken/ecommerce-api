@@ -16,14 +16,10 @@ terraform {
     }
   }
 
-  # Use local state by default to avoid S3 backend bootstrap issues.
-  # Optional: to use remote S3 state later, run:
-  # terraform init -reconfigure \
-  #   -backend-config="bucket=<existing-bucket-name>" \
-  #   -backend-config="key=ecommerce-api/dev/terraform.tfstate" \
-  #   -backend-config="region=us-east-1" \
-  #   -backend-config="encrypt=true"
-  backend "local" {
-    path = "terraform.tfstate"
+  backend "s3" {
+    bucket  = "ecommerce-api-tfstate-roma-donskoy-2026"
+    key     = "ecommerce-api/dev/terraform.tfstate"
+    region  = "us-east-1"
+    encrypt = true
   }
 }
