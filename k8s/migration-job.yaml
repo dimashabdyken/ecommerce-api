@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
         - name: migrate-db
-          image: <ВАШ_ECR_РЕПОЗИТОРИЙ_URL>:latest
+          image: ${IMAGE_URI}
           imagePullPolicy: Always
           command: ["uv", "run", "alembic", "upgrade", "head"]
           envFrom:
