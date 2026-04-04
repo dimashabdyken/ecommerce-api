@@ -11,11 +11,12 @@ dependencies = [
     "bcrypt<4",
     "fastapi[standard]>=0.129.2",
     "passlib[bcrypt]>=1.7.4",
+    "prometheus-fastapi-instrumentator>=7.1.0",
     "psycopg2-binary>=2.9.9",
     "pydantic-settings>=2.13.1",
     "pyjwt>=2.11.0",
     "sqlalchemy>=2.0.46",
-    "stripe>=11.3.0"
+    "stripe>=11.3.0",
 ]
 
 [dependency-groups]
