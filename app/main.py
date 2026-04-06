@@ -5,10 +5,10 @@ from app.api.endpoints import auth, cart, payments, products, users
 
 app = FastAPI(title="E-Commerce API")
 
-# Automatically collect request/latency/status metrics and expose /metrics.
+# collect request/latency/status metrics and expose /metrics
 Instrumentator(should_instrument_requests_inprogress=True).instrument(app).expose(app)
 
-# Include routers
+# include routers
 app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(cart.router)
@@ -24,3 +24,8 @@ def read_root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+
+@app.get("/metrics")
+async def metrics():
+    return {"message": "Metrics endpoint is exposed by Prometheus Instrumentator"}
