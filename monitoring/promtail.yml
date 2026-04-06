@@ -15,13 +15,13 @@ scrape_configs:
         refresh_interval: 5s
     relabel_configs:
       - source_labels: [__meta_docker_container_name]
-        regex: '/(api|nginx)'
+        regex: "/(api|nginx)"
         action: keep
       - source_labels: [__meta_docker_container_name]
         target_label: container
       - source_labels: [__meta_docker_container_name]
-        regex: '/(.*)'
-        replacement: '$1'
+        regex: "/(.*)"
+        replacement: "$1"
         target_label: service
       - source_labels: [__meta_docker_container_log_stream]
         target_label: stream
