@@ -23,9 +23,9 @@
     },
     "editable": true,
     "fiscalYearStartMonth": 0,
-    "gnetId": 16110,
+    "gnetId": null,
     "graphTooltip": 0,
-    "id": 4,
+    "id": null,
     "links": [],
     "panels": [
         {
@@ -1083,7 +1083,7 @@
     "timepicker": {},
     "timezone": "",
     "title": "FastAPI Observability",
-    "uid": "ecommerce-api_observability",
+    "uid": "fastapi-observability",
     "version": 1,
     "weekStart": ""
 }
