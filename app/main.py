@@ -1,8 +1,12 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.endpoints import auth, cart, payments, products, users
 
 app = FastAPI(title="E-Commerce API")
+
+# Automatically collect request/latency/status metrics and expose /metrics.
+Instrumentator(should_instrument_requests_inprogress=True).instrument(app).expose(app)
 
 # Include routers
 app.include_router(auth.router)
