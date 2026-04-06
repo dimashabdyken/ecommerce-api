@@ -33,7 +33,60 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - api 
+      - api
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.54.1
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - api
+
+  loki:
+    container_name: loki
+    image: grafana/loki:3.2.1
+    restart: always
+    ports:
+      - "3100:3100"
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    volumes:
+      - ./monitoring/loki.yml:/etc/loki/local-config.yaml:ro
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail:3.2.1
+    restart: always
+    command: ["-config.file=/etc/promtail/config.yml"]
+    volumes:
+      - ./monitoring/promtail.yml:/etc/promtail/config.yml:ro
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:11.2.2
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+      - loki
 
 volumes:
   postgres_data:
+  grafana_data:
