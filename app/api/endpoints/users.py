@@ -15,7 +15,7 @@ from app.schemas.user import (
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-# ==================== USER PROFILE ====================
+# user profile management
 
 
 @router.get("/me", response_model=UserProfileResponse)
@@ -75,7 +75,7 @@ def change_password(
     return {"message": "Password updated successfully"}
 
 
-# ==================== ADDRESS MANAGEMENT ====================
+# address management
 
 
 @router.get("/me/addresses", response_model=list[AddressResponse])
@@ -102,7 +102,6 @@ def create_address(
     current_user: User = Depends(get_current_user),
 ):
     """Create a new address for the current user."""
-    # If this is marked as default, unset other defaults
     if address.is_default:
         db.query(Address).filter(
             Address.user_id == current_user.id, Address.is_default.is_(True)
@@ -157,7 +156,6 @@ def update_address(
             status_code=status.HTTP_404_NOT_FOUND, detail="Address not found"
         )
 
-    # If setting this as default, unset other defaults
     if address_update.is_default and not address.is_default:
         db.query(Address).filter(
             Address.user_id == current_user.id,
@@ -174,6 +172,9 @@ def update_address(
     db.refresh(address)
 
     return address
+
+
+# delete user address and set default address
 
 
 @router.delete("/me/addresses/{address_id}", status_code=status.HTTP_204_NO_CONTENT)
