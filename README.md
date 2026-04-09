@@ -254,9 +254,3 @@ GitHub Actions runs on every push to `main` and on pull requests:
 
 ---
 
-## Author
-
-Abdyken Dinmukhammed
-
-- GitHub: https://github.com/dimashabdyken
-- LinkedIn: https://linkedin.com/in/abdykendinmuhammed
