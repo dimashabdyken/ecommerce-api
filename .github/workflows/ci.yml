@@ -42,9 +42,15 @@ jobs:
         with:
           python-version: "3.14"
 
-      - name: Sync dependencies from uv.lock
+      - name: Install dependencies
         run: |
-          uv sync --frozen --dev
+          python -m pip install --upgrade pip
+          if [ -f uv.lock ]; then
+            pip install uv
+            uv sync --frozen --dev
+          else
+            pip install pytest ruff
+          fi
 
       - name: Lint with ruff
         run: uv run ruff check .
